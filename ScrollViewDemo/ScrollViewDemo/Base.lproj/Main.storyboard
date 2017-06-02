@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="12120" systemVersion="16E195" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="BYZ-38-t0r">
+    <device id="retina4_7" orientation="portrait">
+        <adaptation id="fullscreen"/>
+    </device>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="12088"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <scenes>
+        <!--View Controller-->
+        <scene sceneID="tne-QT-ifu">
+            <objects>
+                <viewController id="BYZ-38-t0r" customClass="ViewController" customModule="ScrollViewDemo" customModuleProvider="target" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="y3c-jy-aDJ"/>
+                        <viewControllerLayoutGuide type="bottom" id="wfy-db-euE"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="8bC-Xf-vdC">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                    </view>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
+            </objects>
+        </scene>
+        <!--Scroll View Controller-->
+        <scene sceneID="l9U-qG-6Y1">
+            <objects>
+                <viewController id="TVT-J8-v0f" customClass="ScrollViewController" customModule="ScrollViewDemo" customModuleProvider="target" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="b3E-RB-VYl"/>
+                        <viewControllerLayoutGuide type="bottom" id="JRI-46-aAv"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="LwY-Kr-Jh6">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="eJl-rX-TvL">
+                                <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                                <subviews>
+                                    <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="image" translatesAutoresizingMaskIntoConstraints="NO" id="9Bu-ii-KoD">
+                                        <rect key="frame" x="0.0" y="0.0" width="2000" height="1500"/>
+                                    </imageView>
+                                </subviews>
+                                <constraints>
+                                    <constraint firstAttribute="bottom" secondItem="9Bu-ii-KoD" secondAttribute="bottom" id="8nM-ES-RW8"/>
+                                    <constraint firstItem="9Bu-ii-KoD" firstAttribute="leading" secondItem="eJl-rX-TvL" secondAttribute="leading" id="E3b-eS-gbP"/>
+                                    <constraint firstAttribute="trailing" secondItem="9Bu-ii-KoD" secondAttribute="trailing" id="jmN-9z-IRA"/>
+                                    <constraint firstItem="9Bu-ii-KoD" firstAttribute="top" secondItem="eJl-rX-TvL" secondAttribute="top" id="uXe-GJ-cGV"/>
+                                </constraints>
+                                <edgeInsets key="layoutMargins" top="8" left="8" bottom="8" right="8"/>
+                                <inset key="scrollIndicatorInsets" minX="0.0" minY="-100" maxX="0.0" maxY="0.0"/>
+                                <connections>
+                                    <outlet property="delegate" destination="TVT-J8-v0f" id="pvR-05-6jm"/>
+                                </connections>
+                            </scrollView>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <constraints>
+                            <constraint firstItem="eJl-rX-TvL" firstAttribute="leading" secondItem="LwY-Kr-Jh6" secondAttribute="leading" id="0Ah-Oa-unf"/>
+                            <constraint firstItem="JRI-46-aAv" firstAttribute="top" secondItem="eJl-rX-TvL" secondAttribute="bottom" id="6Ag-ib-28X"/>
+                            <constraint firstItem="eJl-rX-TvL" firstAttribute="top" secondItem="LwY-Kr-Jh6" secondAttribute="top" id="KMf-33-2i1"/>
+                            <constraint firstAttribute="trailing" secondItem="eJl-rX-TvL" secondAttribute="trailing" id="x8j-s1-sIR"/>
+                        </constraints>
+                    </view>
+                    <connections>
+                        <outlet property="imageView" destination="9Bu-ii-KoD" id="pFG-4Y-k71"/>
+                        <outlet property="scrollView" destination="eJl-rX-TvL" id="hwa-KL-2L6"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="d3M-eE-ZdH" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="1037.5999999999999" y="92.203898050974516"/>
+        </scene>
+    </scenes>
+    <resources>
+        <image name="image" width="2000" height="1500"/>
+    </resources>
+</document>
