@@ -38,6 +38,8 @@ class PhotosViewController: UIViewController, UICollectionViewDelegate {
         }
         // Do any additional setup after loading the view.
     }
+    
+  
 
     func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell,
                         forItemAt indexPath: IndexPath) {
