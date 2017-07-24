@@ -20,27 +20,44 @@ class PhotosViewController: UIViewController, UICollectionViewDelegate {
         self.collectionView.dataSource = photoDataSource
         self.collectionView.delegate = self
         
+        updateDataSource()
+        
         store.fetchInterestingPhotos { (photosResult) in
             // when the task is done we will get the photosResult as [Photo]
             // async task
-            switch photosResult {
-                case let .success(photos):
-                    print("Got \(photos.count) photos.")
-                    self.photoDataSource.photos = photos
-                
-                case let .failure(error):
-                    print("Error fetching interesting photos: \(error)")
-                    self.photoDataSource.photos.removeAll()
-            }
-            
-            self.collectionView.reloadSections(IndexSet(integer: 0))
-            
+            self.updateDataSource()
         }
+        
         // Do any additional setup after loading the view.
     }
     
+    private func updateDataSource() {
+        store.fetchAllPhotos { (photoResult) in
+            switch photoResult {
+            case let .success(photos):
+                self.photoDataSource.photos = photos
+            
+            case .failure:
+                self.photoDataSource.photos.removeAll()
+            }
+            self.collectionView.reloadSections(IndexSet(integer: 0))
+        }
+    }
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        switch segue.identifier {
+        case "showPhoto"?:
+            if let selectedIndexPath = collectionView.indexPathsForSelectedItems?.first {
+                let photo = photoDataSource.photos[selectedIndexPath.row]
+                let destinationVC = segue.destination as! PhotoInfoViewController
+                destinationVC.photo = photo
+                destinationVC.store = store
+            }
+        default:
+            preconditionFailure("Unexpected segue identifier.")
+        }
+    }
   
-
     func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell,
                         forItemAt indexPath: IndexPath) {
         

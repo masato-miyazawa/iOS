@@ -8,6 +8,7 @@
 
 import Foundation
 import UIKit
+import CoreData
 
 enum PhotosResult {
     case success([Photo])
@@ -27,17 +28,48 @@ class PhotoStore {
     
     let imageStore = ImageStore()
     
+    let persistentContainer: NSPersistentContainer = {
+        let containter = NSPersistentContainer(name: "PhotoLibrary")
+        containter.loadPersistentStores { (
+            description, error) in
+            
+            if let error = error {
+                print("Error setting up CoreData(\(error)).")
+            }
+        }
+        return containter
+    }()
+    
     private let session: URLSession = {
         let config = URLSessionConfiguration.default
         return URLSession(configuration: config)
     }()
+    
+    
+    func fetchAllPhotos(completion: @escaping (PhotosResult) -> Void) {
+        let fetchRequest: NSFetchRequest<Photo> = Photo.fetchRequest()
+        let sortByDateTaken = NSSortDescriptor(key: #keyPath(Photo.dateTaken), ascending: true)
+        
+        fetchRequest.sortDescriptors = [sortByDateTaken]
+        let viewContext = persistentContainer.viewContext
+        viewContext.perform {
+            do {
+                let allPhotos = try viewContext.fetch(fetchRequest)
+                completion(.success(allPhotos))
+            } catch {
+                completion(.failure(error))
+            }
+        }
+        
+    }
+    
     
     private func processPhotosRequest(data: Data?, error: Error?) -> PhotosResult {
         
         guard let jsonData = data else {
             return .failure(error!)
         }
-        return FlickrAPI.photos(fromJSON: jsonData)
+        return FlickrAPI.photos(fromJSON: jsonData, into: persistentContainer.viewContext)
     }
     
     private func processImageRequest(data: Data?, error: Error?) -> ImageResult {
@@ -53,15 +85,19 @@ class PhotoStore {
     }
     
     func fetchImage(for photo: Photo, completion: @escaping (ImageResult) -> Void) {
-        let photoKey = photo.photoID
+        guard let photoKey = photo.photoID else {
+            preconditionFailure("Photo expected to have a photoID.")
+        }
         if let image = imageStore.image(forKey: photoKey) {
             OperationQueue.main.addOperation {
                 completion(.success(image))
             }
             return
         }
-        let photoURL = photo.remoteURL
-        let request = URLRequest(url: photoURL)
+        guard let photoURL = photo.remoteURL else {
+            preconditionFailure("Photo expected to have a remote URL.")
+        }
+        let request = URLRequest(url: photoURL as URL)
         let task = session.dataTask(with: request) { (data, response, error) in
             // result is UIImage
             let result = self.processImageRequest(data: data, error: error)
@@ -81,7 +117,14 @@ class PhotoStore {
         let task = session.dataTask(with: request) {
             (data, response, error) in
             // result is [Photo]
-            let result = self.processPhotosRequest(data: data, error: error)
+            var result = self.processPhotosRequest(data: data, error: error)
+            if case .success = result {
+                do {
+                    try self.persistentContainer.viewContext.save()
+                } catch let error {
+                    result = .failure(error)
+                }
+            }
             
             OperationQueue.main.addOperation {
                 completion(result)
