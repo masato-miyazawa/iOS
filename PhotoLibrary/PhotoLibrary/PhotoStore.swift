@@ -15,6 +15,11 @@ enum PhotosResult {
     case failure(Error)
 }
 
+enum TagsResult {
+    case success([Tag])
+    case failure(Error)
+}
+
 enum ImageResult {
     case success(UIImage)
     case failure(Error)
@@ -60,15 +65,32 @@ class PhotoStore {
                 completion(.failure(error))
             }
         }
-        
     }
     
+    
+    func fetchAllTags(completion: @escaping (TagsResult)-> Void) {
+        let fetchRequest: NSFetchRequest<Tag> = Tag.fetchRequest()
+        let sortByName = NSSortDescriptor(key: #keyPath(Tag.name), ascending: true)
+        
+        fetchRequest.sortDescriptors = [sortByName]
+        let viewContext = persistentContainer.viewContext
+        viewContext.perform {
+            do {
+                let allTags = try fetchRequest.execute()
+                completion(.success(allTags))
+            } catch {
+                completion(.failure(error))
+            }
+        }
+        
+    }
     
     private func processPhotosRequest(data: Data?, error: Error?) -> PhotosResult {
         
         guard let jsonData = data else {
             return .failure(error!)
         }
+        //
         return FlickrAPI.photos(fromJSON: jsonData, into: persistentContainer.viewContext)
     }
     
